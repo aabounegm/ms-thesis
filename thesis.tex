@@ -2,7 +2,7 @@
 
 # set the compiler XeLatex to use fontspec package
 \usepackage{fontspec}
- 
+
 \setmainfont{Times New Roman}
 
 \usepackage{vmargin}
@@ -17,7 +17,7 @@
 %%%%% ADDED TO SUPPORT TT BOLD FACES %%%%
 \DeclareFontShape{OT1}{cmtt}{bx}{n}{<5><6><7><8><9><10><10.95><12><14.4><17.28><20.74><24.88>cmttb10}{}
 \renewcommand{\ttdefault}{pcr}
-%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{atbegshi,picture}
 \usepackage[T1,T2A]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -72,7 +72,7 @@
 % \usepackage{t1enc}
 
 \usepackage{chngcntr}
-\usepackage{upgreek} 
+\usepackage{upgreek}
 \usepackage{bm}
 \usepackage{hyperref}
 \usepackage{setspace}
@@ -97,7 +97,7 @@
 \captionsetup[table]{labelfont={normalfont}, name={TABLE}, labelsep={newline}}
 \counterwithout{table}{chapter}
 \renewcommand{\thetable}{\Roman{table}}
-\setlength{\parindent}{2em} 
+\setlength{\parindent}{2em}
 \DeclareCaptionLabelSeparator{figSep}{.\quad}
 \captionsetup[figure]{labelfont={normalfont}, name={Fig.}, labelsep=period}
 \counterwithout{figure}{chapter}
@@ -128,7 +128,7 @@
 
 \newcommand{\dedication}[1]
    {\thispagestyle{empty}
-     
+
    \begin{flushleft}\raggedleft #1\end{flushleft}
 }
 
@@ -155,4 +155,3 @@
 \printbibliography[heading=bibintoc,title={Bibliography cited}]
 \include{chapters/appex}
 \end{document}
-
