@@ -1,14 +1,3 @@
 *.log
-# TeX Live temp files
-*.aux
-*.fdb_latexmk
-*.fls
-*.bcf
-*.bbl
-*.lot
-*.out
-*.run.xml
-*.synctex.gz
-*.toc
-*.lof
-*.xdv
+# TeX Live temp/build files
+out
