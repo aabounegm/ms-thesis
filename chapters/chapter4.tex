@@ -1,2 +1,56 @@
 \chapter{Implementation}
 \label{chap:impl}
+
+\section{\Rzk{} Language Server and VS Code extesion}
+
+In this section, we describe design and implementation of the language server
+and the VS Code extension for \Rzk{} proof assistant.
+The language server has direct access to the proof assistant internals,
+including the typechecking algorithm and the internal abstract syntax representation,
+and provides an interface conforming to the Language Server Protocol.
+The VS Code extension then acts as a buffer between the editor (VS Code)
+and the language server, to bring the interactive capabilities to the user.
+
+We subject the language server to support the features specified below.
+
+\subsubsection{Intuitive Interface and Syntax Highlighting.}
+
+The VS Code extension introduces an intuitive interface that aligns with
+the expectations of mathematicians and computer scientists.
+Users benefit from clear and accessible navigation,
+enabling efficient exploration of HoTT-based structures.
+Furthermore, the extension provides syntax and semantic highlighting,
+enhancing code readability, and facilitating error detection.
+
+\subsubsection{Code Completion and Suggestions.}
+
+\Rzk{}'s VS Code extension leverages the LSP to offer intelligent code completion
+and context-aware suggestions. As users work with \Rzk{}, the extension assists
+in writing code more efficiently by providing relevant suggestions, reducing
+the likelihood of syntax errors, and accelerating the development process.
+
+\subsubsection{Real-time Error Checking.}
+
+One of the extension's notable strengths lies in its ability to perform real-time error checking.
+As users input and modify code, the language server continuously analyzes it,
+reporting back any type errors or other issues with the proof.
+This proactive error checking mechanism empowers users to identify and rectify issues promptly,
+fostering the creation of mathematically sound programs.
+
+\subsection{VS Code extension}
+
+To bring about these features to the users, a thin wrapper around the language server in the form of a VS Code extension is necessary.
+Additionally, the extension manages the installation of the language server itself on all major operating systems (Windows, macOS, and Ubuntu)
+powered by pre-built binaries attached to releases on GitHub,
+in addition to facilitating building the language server from source on platforms
+for which pre-built binaries are not available.
+It is also worth mentioning that the language server is designed to be compatible
+with any other editor that supports LSP.
+In particular, users have reported success in integrating it with the NeoVim editor,
+and it is planned to be tested with other editors as well.
+
+\subsection{\Rzk{} Language Server}
+
+At the core of the \Rzk{} tool suite is the language server that powers all the editor features that make it pleasant to develop proofs in \Rzk{}. In particular, it currently supports semantic highlighting, diagnostic messages, and text completion. Additionally, progress reporting for long-running processes (such as type-checking for large projects) is currently under work.
+
+For the first versions of the language server, it is shipped as part of the \Rzk{} proof assistant itself under a different subcommand, but it is planned to decouple both components and have the language server depend on the core library. They are implemented in the Haskell programming language using the \texttt{lsp}\footnote{\url{https://hackage.haskell.org/package/lsp}} package.

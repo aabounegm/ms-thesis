@@ -1,3 +1,17 @@
 \begin{abstract}
-  abstract \ldots
+  The Riehl-Shulman type theory for synthetic $\infty$-categories is a new theory building on Homotopy Type Theory (HoTT).
+  The experimental proof assistant \Rzk{} offers an automated proof checker for this theory.
+  With the goal of making this theory more accessible to mathematicians and computer scientists,
+  we present in this paper a work-in-progress on a collection of command line and interactive tools for \Rzk.
+  These tools comprise a language server, an accompanying Visual Studio Code (VS Code) extension,
+  and a list of smaller satellite tools offering minor conveniences.
+  Although we focus on the support of VS Code,
+  the language server is also compatible with other popular editors that support the Language Server Protocol (LSP),
+  such as Emacs and Vim.
+
+  % To support interactivity, we adjust the typechecker in \Rzk{} to work in an incremental fashion. In this paper, we present an initial version of a generic approach to the design of typecheckers that focus on LSP support. Building on top of this, we design and implement the language server for \Rzk. The language server offers advanced language features, including syntax and semantic highlighting, code completion, and diagnostics reporting. The VS Code extension complements the server with a user-friendly interface, facilitating interactive theorem proving and exploration of higher-dimensional structures.
+
+  % Additional tools are developed along with the extension and language server to provide a pleasant experience outside the editor as well. These include a plugin to MkDocs that renders tope diagrams, a GitHub Action to type-check formalizations in Continuous integration environments, and a Pygments plugin for syntax highlighting \Rzk{} code blocks in LaTeX documents.
+
+  % The effectiveness and usability of the language server and satellite tools is verified by \Rzk{} users coming from different backgrounds (mathematics, computer science, and software engineering), who use \Rzk{} to formalize theorems and provide feedback on their experience.
 \end{abstract}
