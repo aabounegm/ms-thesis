@@ -72,19 +72,20 @@ it still leaves something to be desired.
 LSP was mainly designed with general purpose programming languages in mind,
 but theorem provers (or, more generally, specification language) have slightly
 different requirements that are unmet by LSP.
-This is why \cite{JonasKjaerRask2021} attempts to extend the original LSP
+This is why Jonas Rask et al. \cite{JonasKjaerRask2021} attempt to extend the original LSP
 specification with features that are especially useful for specification languages.
 The authors call the protocol extension \textit{Specification Language Server Protocol} (SLSP).
-Simply speaking, it defines a set of new LSP requests/notification along with
+Simply speaking, it defines a set of new LSP requests and/or notifications and
 their payloads, and extends VS Code's interface with a view that displays proof
-information in a way similar to Proof General \cite{Aspinall2000}.
+information in a way that is visually similar to Proof General \cite{Aspinall2000}.
 
-
-% LSP is not good enough for "specification languages" (SL) because it is not designed for them. SLSP is a protocol for specification languages based on LSP.
-
-% It adds missing features (requests and notification types) for specification languages. It also adds a new feature for specification languages: "proof view" (a view of the proof state - like Lean's Info View).
-
-% TODO: figure out what it uses DAP for exactly.
+The motivation behind it is that LSP by itself was not designed with \textit{specification languages}
+(including theorem provers) in mind, rendering it insufficiently adequate for them.
+SLSP is an attempt at defining a protocol extension for LSP designed for specification languages.
+It adds features useful for specification languages such as special requests and notifications,
+a proof view similar to Lean's Info View panel, and interactivity using the Debug Adapter Protocol (DAP).
+It also adds numerous other features such as code generation, conversion to other specification languages,
+UML vizualization, test automation, and more.
 
 \subsection{VS Code extension for Lean 4.}
 
