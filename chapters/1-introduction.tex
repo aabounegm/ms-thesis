@@ -1,6 +1,8 @@
 \chapter{Introduction}
 \label{chap:intro}
 
+\section{Proof Assistants}
+
 Proof assistants, also known as interactive theorem provers (ITPs),
 are software tools used in mathematics, computer science, and formal methods
 to assist in the development and verification of mathematical proofs.
@@ -8,7 +10,7 @@ These tools play a crucial role in ensuring the correctness and reliability
 of complex mathematical statements and software systems.
 Examples of such tools include Agda~\cite{BoveDybjerNorell2009}, Coq~\cite{BertotCasteran2013}, and Lean~\cite{deMouraUllrich2021}.
 
-Although similar to typechecking in programming languages,
+Although similar in principal to typechecking in programming languages,
 proof checking is normally seen as an interactive process between the mathematician and a proof assistant.
 To this end, most proof assistants provide some interactive features either through specialized IDEs
 (e.g. CoqIDE\footnote{\url{https://coq.inria.fr/refman/practical-tools/coqide.html}}),
@@ -19,7 +21,9 @@ Most well-established proof assistants support several of these options.
 \Rzk{}~\cite{Kudasov2023-github-rzk} is a new proof assistant that is based on Riehl-Shulman's type theory for synthetic $\infty$-categories~\cite{Riehl2017}.
 The proof assistant is experimental but has been successfully used recently to formalize some fundamental results for $\infty$-categories,
 including the $\infty$-categorical Yoneda lemma~\cite{Kudasov2023}.
-% motivation? something about being a new proof assistant and lacking tooling?
+However, \Rzk{} lacked most of the aforementioned features that are usually found in theorem provers, such as interactivity and syntax highlighting.
+This paper reports on the implementation of utility and interactive tools around \Rzk{} proof assistant, focusing on the language server and VS Code extension support.
+The goal is to provide a more user-friendly interface for \Rzk{} that would make it easier to use for both beginners and experienced users.
 
 \section{Language Servers}
 
