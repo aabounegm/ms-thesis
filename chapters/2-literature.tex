@@ -2,6 +2,24 @@
 \label{chap:lr}
 \chaptermark{Second Chapter Heading}
 
+\section{Proof Assistants}
+
+\subsection{Libraries for proof assistant development}
+
+% \nikolai{We should mention the A.L.G.A.E. project: \url{https://redprl.org/#algae}}
+% \abdelrahman{Seems like largely a work in progress. I don't see how we can use any of the libraries mentioned there.}
+\subsubsection{Proof General.}
+
+Proof General \cite{Aspinall2000} is a tool for developing interactive theorem
+provers that has been used for many widely-known proof assistants such as Coq
+and Isabelle.
+It is based on the Emacs editor and provides an interactive GUI with relative
+ease for theorem provers developed with its help.
+% The interface produced by Proof General is familiar to many users of theorem
+% provers, and so it makes sense to use it as a reference when developing the
+% interface of a new proof assistant.
+
+
 \section{Language Server Protocol}
 
 The Language Server Protocol is a common protocol for programming language analyzers to communicate with development tools. It was developed by Microsoft in an effort to decouple a language's implementation from its editor interface \cite{Buender2019} and has contributed significantly to decreasing the effort required to add support for a given programming language in a given text editor (that supports LSP). The Language Server Protocol is used between a tool (the client) and a language smartness provider (the server) to integrate features like auto complete, go to definition, find all references and alike into the tool. The Language Server Protocol is used by many development tools like Visual Studio Code, Eclipse, Emacs, Sublime Text, Atom, and Vim.
@@ -43,21 +61,3 @@ extension that provides a user interface for working with Lean interactively.
 This extension uses LSP to communicate with the Lean server and provides a lot
 of useful features, the most notable of which is the Info View panel that
 displays information about current proof state and allows interacting with it \cite{Nawrocki2023}.
-
-\subsection{Proof General.}
-
-Proof General \cite{Aspinall2000} is a tool for developing interactive theorem
-provers that has been used for many widely-known proof assistants such as Coq
-and Isabelle.
-It is based on the Emacs editor and provides an interactive GUI with relative
-ease for theorem provers developed with its help.
-% The interface produced by Proof General is familiar to many users of theorem
-% provers, and so it makes sense to use it as a reference when developing the
-% interface of a new proof assistant.
-
-% \subsection{Libraries for proof assistant development}
-
-% \nikolai{We should mention the A.L.G.A.E. project: \url{https://redprl.org/#algae}}
-% \abdelrahman{Seems like largely a work in progress. I don't see how we can use any of the libraries mentioned there.}
-
-\section{Proof Assistants}
