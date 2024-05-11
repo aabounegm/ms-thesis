@@ -37,8 +37,6 @@ Lean 3 was the first stable version, but it reached its end-of-life after Lean 4
 
 \subsection{Libraries for proof assistant development}
 
-% \nikolai{We should mention the A.L.G.A.E. project: \url{https://redprl.org/#algae}}
-% \abdelrahman{Seems like largely a work in progress. I don't see how we can use any of the libraries mentioned there.}
 \subsubsection{Proof General}
 
 Proof General \cite{Aspinall2000} is a tool for developing interactive theorem
@@ -48,6 +46,14 @@ It is based on the Emacs editor and provides an interactive GUI with relative
 ease for theorem provers developed using it.
 The interface produced by Proof General is familiar to many users of interative theorem
 provers, making it useful as a reference when developing the interface of a new proof assistant.
+
+\subsubsection{A.L.G.A.E.}
+
+A.L.G.A.E. \footnote{\url{https://redprl.org/\#algae}} is a project that aims to provide a set
+of composable libraries for developing proof assistants in OCaml.
+The team behind it has built a set of tools that help with compiler diagnostics,
+universe levels \cite{HouFavonia2023}, cubical type theory support, and more.
+They also used it to build a proof assistant called RedRPL.
 
 \section{Language Server Protocol}
 
