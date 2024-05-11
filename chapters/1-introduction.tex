@@ -54,52 +54,6 @@ on the language server since it needs to support more features than a regular co
 including listing variables in context along with their types, supporting Unicode symbols,
 and most importantly allowing for an interactive step-by-step proof walkthrough.
 
-\section{Related Work}
-
-% \subsection{Language Server Protocol}
-% The Language Server protocol was developed by Microsoft in an effort to decouple a language's implementation from its editor interface \cite{Buender2019}. It has contributed significantly to decreasing the effort required to add support for a given programming language in a given text editor (that supports LSP).
-
-\subsubsection{Specification Language Server Protocol.}
-
-While LSP has greatly improved the experience of developing language servers,
-it still leaves a bit to be desired.
-LSP was mainly designed with general purpose programming languages in mind,
-but theorem provers (or more generally, specification language) have slightly
-different requirements that are unmet by LSP.
-This is why \cite{JonasKjaerRask2021} attempts to extend the original LSP
-specification with features that are especially useful for specification languages.
-The authors call the protocol extension \textit{Specification Language Server Protocol} (SLSP).
-Simply speaking, it defines a set of new LSP requests/notification along with
-their payloads, and extends VS Code's interface with a view that displays proof
-information in a way similar to Proof General \cite{Aspinall2000}.
-
-\subsubsection{VS Code extension for Lean 4.}
-
-Lean 4 \cite{deMouraUllrich2021} is a programming language and proof assistant
-by Microsoft Research\footnote{\url{https://www.microsoft.com/en-us/research/project/lean/}}
-from which we draw much inspiration.
-In particular, the primary way to develop Lean programs is using its VS Code
-extension that provides a user interface for working with Lean interactively.
-This extension uses LSP to communicate with the Lean server and provides a lot
-of useful features, the most notable of which is the Info View panel that
-displays information about current proof state and allows interacting with it \cite{Nawrocki2023}.
-
-\subsubsection{Proof General.}
-
-Proof General \cite{Aspinall2000} is a tool for developing interactive theorem
-provers that has been used for many widely-known proof assistants such as Coq
-and Isabelle.
-It is based on the Emacs editor and provides an interactive GUI with relative
-ease for theorem provers developed with its help.
-% The interface produced by Proof General is familiar to many users of theorem
-% provers, and so it makes sense to use it as a reference when developing the
-% interface of a new proof assistant.
-
-% \subsection{Libraries for proof assistant development}
-
-% \nikolai{We should mention the A.L.G.A.E. project: \url{https://redprl.org/#algae}}
-% \abdelrahman{Seems like largely a work in progress. I don't see how we can use any of the libraries mentioned there.}
-
 \section{Contribution}
 
 In this paper, we report on the work-in-progress on the implementation of
