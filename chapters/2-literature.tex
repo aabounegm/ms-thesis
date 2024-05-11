@@ -4,6 +4,38 @@
 
 \section{Proof Assistants}
 
+\Rzk{} builds on recent efforts by other proof assistants to provide a more user-friendly interface for theorem proving,
+especially related to synthetic $\infty$-categories.
+In this section, we review some of the most popular proof assistants and libraries for proof assistant development.
+
+\subsection{Proof assistants with support for synthetic $\infty$-categories}
+
+\subsubsection{Coq}
+
+Coq \cite{huet1997coq} is one of the earliest proof assistants that are still widely used in the research community.
+It is based on the calculus of inductive constructions and is known for its support for dependent types and inductive types.
+Coq is used in a variety of research areas, including formal verification, programming language theory, and mathematics.
+
+Univalent foundations (and hence also Homotopy Type Theory) support in Coq is provided by the UniMath library~\cite{DanielGrayson2024}\cite{MacPherson2019}.
+
+\subsubsection{Cubical Agda}
+
+Agda \cite{BoveDybjerNorell2009} is a proof assistant based on the propositions-as-types paradigm~\cite{Wadler2015} originally developed by the Chalmers University of Technology in Sweden.
+Agda is known for its support for inductive types, coinductive types, and a rich type system that allows for the
+development of proofs and programs in a single language.
+Agda is used in a variety of research areas, including formal verification, programming language theory, and mathematics.
+
+Cubical Agda \cite{VEZZOSI2021} is a mode of operation for Agda that extends the language with a cubical type theory \cite{Cohen2016} based on the univalence axiom.
+It allows to formalize Homotopy Type Theory and Univalent Foundations in Agda.
+
+
+\subsubsection{Lean 4}
+
+Lean is a functional programming language and a proof assistant based on the calculus of constructions with inductive types.
+It is developed by Microsoft Research, with the first version released in 2013.
+The first two versions were experimental and supported Homotopy Type Theory, but that support was later dropped.
+Lean 3 was the first stable version, but it reached its end-of-life after Lean 4 was released in 2021, adding many features to the language in a backwards-incompatible manner.
+
 \subsection{Libraries for proof assistant development}
 
 % \nikolai{We should mention the A.L.G.A.E. project: \url{https://redprl.org/#algae}}
