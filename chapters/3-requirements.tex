@@ -1,2 +1,81 @@
 \chapter{System Requirements and Design}
 \label{chap:req}
+
+\section{Requirements}
+
+The requirements for the proof assistant (and its VS Code extension) can be divided into two categories:
+core features and user experience features.
+Core features are the necessary functionalities and properties that the proof assistant must possess in order to support
+a language server without too much difficulty.
+User experience features are the functionalities that do not affect the internal design of the proof assistant itself,
+but help provide a pleasant user experience.
+
+\subsection{Core features}
+
+Since the \Rzk{} proof assistant itself is already in development and has a working typechecker,
+the focus here is on the features that are necessary for the proof assistant to be used in an interactive setting.
+So far, the proof assistant only had a command-line interface (CLI) that typechecked all the input files
+every time the user wanted to check a proof.
+It was clear that this was not a sustainable way to develop proofs, especially for larger projects.
+Thankfully, there was a clear separation between the core typechecking algorithm and the interface to it as a library,
+simplifying the work to just modifying the interface part without touching the algorithm.
+
+This interface is required to support incremental typechecking, which is a feature that allows the user to typecheck
+only the parts of the code that have changed since the last typecheck, speeding up the process significantly.
+This is similar to TypeScript's incremental compilation feature, which caches information during each compilation
+and then only compiles the files that have changed since the last compilation \cite{Vanderkam2024}.
+To achieve this, the interface must be able to cache the typechecking results in memory and update them as needed.
+The caching module should additionally be able to handle different methods of caching, such as in-memory or on-disk caching,
+since there can be different user interfaces with different requirements (such as a CLI vs. language server).
+
+The ability to support different user interfaces is important since the proof assistant is not limited to just VS Code.
+Consumers of the proof assistant are not even necessarily humans who would prefer some sort of graphical interface,
+but could also be other software tools, such as Continuous Integration (CI) pipelines or other sattelite tools.
+Therefore, a command-line interface is also necessary, which would allow the proof assistant to be used in a non-interactive setting.
+
+Lastly, the proof assistant interface must be designed in a way that allows for easy extension and modification,
+leading to a short development cycle for new features.
+This is especially important for a proof assistant that is still in development and has a lot of features planned for the future.
+
+% "query" support (WIP)
+
+\subsection{User Experience features}
+
+The main purpose of the core features described above is to aid in improving the user experience of the proof assistant.
+These UX requirements are not necessarily just features or functionalities, but also properties the proof assistant must possess.
+
+The most important of these properties is the ease of use for beginners (or non-programmers) and an intuitive interface.
+This is crucial for the proof assistant to be adopted by a wider audience, as the target users are not necessarily
+experienced programmers.
+In any way, the editing experience has to be comfortable to any kind of user.
+
+Fast feedback on input is another important property that must be present in the proof assistant.
+This includes, for example, diagnostic messages that are displayed as soon as the user types something wrong,
+as well as hover information that shows the type of a variable and its definition location when the user hovers over it with the mouse.
+It also includes providing code completions and suggestions as the user types, which can help prevent the use of undefined variables.
+Users also expect to be able to jump to the definition of a variable or find all references to it.
+
+Lastly, features that are common to most popular IDEs such as git integration, debugging, and refactoring tools are also expected.
+
+\section{Design}
+
+Judging by the aforementioned requirements, it is clear that the proof assistant must be able to support a language server.
+Additionally, the language server should be implemented using LSP specifically to allow for easy integration with
+different editors without having to write a dedicated extension or plugin for each text editor.
+The proof assistant's core would expose an interface that the language server can use to interact with it,
+as well as a CLI that can be used for non-interactive purposes.
+
+The language server itself would be implemented in Haskell, as the proof assistant is written in Haskell as well.
+This would allow for easy integration with the proof assistant's core and would make it easier to maintain the codebase.
+
+The components of the system are as follows:
+
+% TODO: split into subsections
+\begin{itemize}
+  \item Core typechecker
+  \item CLI
+  \item Language Server
+  \item VS Code extension
+  \item Marketplace + Open VSX + VSIX on GH
+  \item Utility tools (python mkdocs plugin for rendering SVGs, GitHub Action)
+\end{itemize}
