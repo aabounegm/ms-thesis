@@ -68,14 +68,41 @@ as well as a CLI that can be used for non-interactive purposes.
 The language server itself would be implemented in Haskell, as the proof assistant is written in Haskell as well.
 This would allow for easy integration with the proof assistant's core and would make it easier to maintain the codebase.
 
-The components of the system are as follows:
+The system can be divided into the following components: core typechecker, CLI, language server, VS Code extension, and utility tools.
+The core typechecking algorithm is the heart of the proof assistant and is responsible for checking the proofs for correctness;
+it is outside the scope of this project, which assumes its readiness and builds upon it.
 
-% TODO: split into subsections
-\begin{itemize}
-  \item Core typechecker
-  \item CLI
-  \item Language Server
-  \item VS Code extension
-  \item Marketplace + Open VSX + VSIX on GH
-  \item Utility tools (python mkdocs plugin for rendering SVGs, GitHub Action)
-\end{itemize}
+Then there is the interface of the typechecker, which can be split into two parts: the CLI and the language server.
+The CLI is a simple interface that allows the user to typecheck a file or a project from the command line.
+It is also useful for non-interactive use, such as in continuous integration pipelines or other tools.
+Its simplicity additionally makes it a sensible interface to use for testing newly added features since
+there are less moving parts to worry about.
+
+The other interface is the language server, which is responsible for providing an interactive interface to the proof assistant.
+It is the more user-friendly of the two interfaces and is the one that will be used by most users.
+It is implemented using Microsoft's Language Server Protocol to allow for easy integration with different text editors,
+such as VS Code, Vim, or Emacs.
+The language server is also responsible for providing the features that are expected from a modern programming language,
+such as code completions, diagnostic messages, and hover information.
+
+The VS Code extension is a thin wrapper around the language server that helps easily download a copy of the language server
+and integrate it with VS Code.
+It does so by checking the releases page in the GitHub repository\footnote{\url{https://github.com/rzk-lang/rzk/releases}}
+and downloading the latest appropriate binary for the user's operating system, which is then cached in extension's
+local storage directory provided by VS Code.
+The extension also makes it easy to build the language server from source if the user prefers to do so.
+Additionally, it exposes the option to specify a custom path for the language server for easier testing and development.
+
+The VS Code extension is made available on multiple platforms, including the Visual Studio Marketplace, Open VSX, and the GitHub repository.
+This is to ensure that the extension is easily discoverable by users and can be installed from multiple sources, especially for users
+who prefer not to use Microsoft's proprietary software and instead opt for alternatives like VSCodium\footnote{\url{https://vscodium.com}}.
+VSCodium can be configured to use Open VSX as its extension marketplace, which allows users to install the extension from there.
+Having the ".vsix" file itself on the GitHub repository's releases page also contributes to the openness and flexibility of the project
+and allows users to install the extension manually if they prefer.
+Releasing to all of those platforms is automated using GitHub Actions, which builds the extension and uploads it to the respective marketplace.
+
+Lastly, there are utility tools developed on the side to help with minor tasks related to the use of the proof assistant.
+For example, there is a Python plugin\footnote{\url{https://pypi.org/project/mkdocs-plugin-rzk/}} for MkDocs that automates rendering
+SVG files in a formalization project that utilizes MkDocs, which is useful for rendering topes as images in the resulting documentation.
+Another tool is a GitHub Action\footnote{\url{https://pypi.org/project/mkdocs-plugin-rzk/}} that simplifies the process
+of installing \Rzk{} in a CI pipeline and running it on the project files.
