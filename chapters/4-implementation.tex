@@ -3,13 +3,17 @@
 
 \section{\Rzk{} Language Server and VS Code extesion}
 
-In this section, we describe design and implementation of the language server
-and the VS Code extension for \Rzk{} proof assistant.
+In this section, we describe the implementation of the language server
+and the VS Code extension for the \Rzk{} proof assistant.
 The language server has direct access to the proof assistant internals,
 including the typechecking algorithm and the internal abstract syntax representation,
 and provides an interface conforming to the Language Server Protocol.
-The VS Code extension then acts as a buffer between the editor (VS Code)
+The VS Code extension then acts as a intermediary between the editor (VS Code)
 and the language server, to bring the interactive capabilities to the user.
+
+\subsection{Features}
+
+% TODO: move this subsection to the requirements/design chapter?
 
 We subject the language server to support the features specified below.
 
@@ -45,6 +49,15 @@ powered by pre-built binaries attached to releases on GitHub,
 in addition to facilitating building the language server from source on platforms
 for which pre-built binaries are not available.
 
+Once the extension is activated, it checks if the \Rzk{} executable is available on the system's
+\texttt{PATH} and if not, checks if it was previously downloaded to the extension's local storage directory.
+If neither are available, it prompts the user to download the latest compatible binary from the GitHub
+releases page and saves it in the local storage directory.
+The user can override this behavior by specifying a custom path to the language server binary.
+
+After that, the extension simply starts the language server in a separate process and establishes a connection to it,
+and the rest is handled by VS Code and the language server.
+
 \subsection{\Rzk{} Language Server}
 
 At the core of the \Rzk{} tool suite is the language server that powers all the editor features that make it pleasant to develop proofs in \Rzk{}. In particular, it currently supports semantic highlighting, diagnostic messages, and text completion. Additionally, progress reporting for long-running processes (such as type-checking for large projects) is currently under work.
@@ -56,3 +69,50 @@ with any other editor that supports LSP, not just VS Code.
 In particular, users have reported success in integrating it with the NeoVim editor,
 and it is planned to be tested with other editors as well.
 
+The language server currently supports the features outlined in the following sections, with more features planned for the future.
+
+\subsubsection{Diagnostics Reporting}
+
+Every time the user saves a file that is part of a formalization project, the language server runs the typechecker
+on the project and reports any errors or warnings that it finds, caching the results to speed up future typechecks.
+The errors and warnings are sent as diagnostic messages via the LSP protocol to the editor,
+which then displays them in the editor's interface.
+This feature is crucial for the users to be able to quickly identify and fix any errors in their proofs.
+These messages are displayed on the location in the file where the error occurred,
+and contain a useful message that explains what went wrong with all the necessary context.
+
+\subsubsection{Text Completion}
+
+The language server also provides text completion suggestions to the user as they type.
+These suggestions are context-aware and are based on the current cursor position in the file.
+They include previously defined proof identifiers, their types, and their definition locations.
+
+\subsubsection{Semantic Highlighting}
+
+Another feature that the language server provides is semantic highlighting, which colors different parts of the code
+based on their meaning.
+This differs from syntax highlighting in that it is smarter and can use more information in determining a token's type (and hence color),
+This is because it uses information from the parser, and not just from the lexer.
+It can also use additional information from the typechecker to determine the type of a token,
+but this is currently not implemented since it was not deemed necessary.
+
+\subsubsection{Formatting}
+
+The language server also provides a formatting feature that allows the user to format their code according to a predefined style.
+This is useful for keeping the codebase consistent and readable, and is especially useful when working in a team.
+The formatter catches common style issues such as indentation, spacing, and line breaks,
+and automatically fixes them according to the predefined style.
+
+A separate CLI subcommand is available to expose this feature outside of the language server as well.
+
+\section{Satellite Tools}
+
+% TODO
+
+\subsection{MkDocs Plugin}
+
+The \texttt{rzk-mkdocs-plugin} is a Python package that provides a plugin for the MkDocs static site generator.
+
+\subsection{GitHub Action}
+
+The \texttt{rzk-github-action} is a GitHub Action that can be used to run the \Rzk{} proof assistant on a GitHub repository.
