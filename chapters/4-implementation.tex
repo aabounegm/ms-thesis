@@ -44,13 +44,15 @@ Additionally, the extension manages the installation of the language server itse
 powered by pre-built binaries attached to releases on GitHub,
 in addition to facilitating building the language server from source on platforms
 for which pre-built binaries are not available.
-It is also worth mentioning that the language server is designed to be compatible
-with any other editor that supports LSP.
-In particular, users have reported success in integrating it with the NeoVim editor,
-and it is planned to be tested with other editors as well.
 
 \subsection{\Rzk{} Language Server}
 
 At the core of the \Rzk{} tool suite is the language server that powers all the editor features that make it pleasant to develop proofs in \Rzk{}. In particular, it currently supports semantic highlighting, diagnostic messages, and text completion. Additionally, progress reporting for long-running processes (such as type-checking for large projects) is currently under work.
 
 For the first versions of the language server, it is shipped as part of the \Rzk{} proof assistant itself under a different subcommand, but it is planned to decouple both components and have the language server depend on the core library. They are implemented in the Haskell programming language using the \texttt{lsp}\footnote{\url{https://hackage.haskell.org/package/lsp}} package.
+
+It is also worth mentioning that the language server is designed to be compatible
+with any other editor that supports LSP, not just VS Code.
+In particular, users have reported success in integrating it with the NeoVim editor,
+and it is planned to be tested with other editors as well.
+
