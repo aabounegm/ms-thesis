@@ -1,4 +1,21 @@
 {
   "latex-workshop.latex.recipe.default": "latexmk",
-  "latex-workshop.latex.outDir": "%DIR%/out"
+  "latex-workshop.latex.outDir": "%DIR%/out",
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-shell-escape", // To allow calling pygmentize
+        "-xelatex", // To use fontspec package
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    }
+  ]
 }

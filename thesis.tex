@@ -18,6 +18,7 @@
 \usepackage{atbegshi,picture}
 \usepackage[T1,T2A]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage{fontspec}
 
 \usepackage[english]{babel}
 \usepackage[backend=biber,style=ieee,autocite=inline]{biblatex}
@@ -57,6 +58,17 @@
 \usepackage{fancyhdr}
 \usepackage{csquotes}
 \usepackage{color}
+\usepackage{xcolor}
+\definecolor{LightGray}{gray}{0.9}
+\usepackage[outputdir=out]{minted}
+\setminted{
+  frame=lines,
+  framesep=2mm,
+  baselinestretch=1.2,
+  bgcolor=LightGray,
+  fontsize=\footnotesize,
+  linenos
+}
 % \usepackage{anyfontsize}
 % \usepackage{mathptmx}
 % \usepackage{t1enc}
@@ -128,6 +140,7 @@
 \tableofcontents
 \listoftables
 \listoffigures
+\listoflistings
 \newpage
 
 
