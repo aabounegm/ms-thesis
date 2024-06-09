@@ -48,6 +48,16 @@ Additionally, the extension manages the installation of the language server itse
 powered by pre-built binaries attached to releases on GitHub,
 in addition to facilitating building the language server from source on platforms
 for which pre-built binaries are not available.
+The source code of the extension is available on the GitHub repository\footnote{
+  \url{https://github.com/rzk-lang/vscode-rzk}},
+and the extension itself is available on the Visual Studio Marketplace\footnote{
+  \url{https://marketplace.visualstudio.com/items?itemName=NikolaiKudasovfizruk.rzk-1-experimental-highlighting}}.
+and on the Open VSX registry\footnote{
+  \url{https://open-vsx.org/extension/NikolaiKudasovfizruk/rzk-1-experimental-highlighting}},
+as well as a pre-built binary on the GitHub releases page\footnote{
+  \url{https://github.com/rzk-lang/vscode-rzk/releases}}.
+
+\subsubsection{Installation and Activation}
 
 Once the extension is activated, it checks if the \Rzk{} executable is available on the system's
 \texttt{PATH} and if not, checks if it was previously downloaded to the extension's local storage directory.
@@ -55,8 +65,96 @@ If neither are available, it prompts the user to download the latest compatible 
 releases page and saves it in the local storage directory.
 The user can override this behavior by specifying a custom path to the language server binary.
 
+\begin{listing}
+  \begin{minted}{typescript}
+function locateRzk(context: vscode.ExtensionContext) {
+  let path = vscode.workspace.getConfiguration().get<string>('rzk.path') ?? '';
+  // Probe 1 - extension settings
+  if (path) {
+    const result = spawnSync(path, ['version']);
+    if (result.status === 0) {
+      return path;
+    } else {
+      output.appendLine(
+        'The configured `rzk.path` option does not point to a valid rzk executable'
+      );
+    }
+  }
+
+  // Probe 2 - global PATH
+  const binExtension = process.platform === 'win32' ? '.exe' : '';
+  path = 'rzk' + binExtension;
+  let result = spawnSync(path, ['version']);
+  if (result.status === 0) {
+    return path;
+  } else {
+    output.appendLine('Cannot find rzk globally');
+  }
+
+  // Probe 3 - extension storage bin folder
+  path = vscode.Uri.joinPath(
+    context.globalStorageUri,
+    'bin',
+    'rzk' + binExtension
+  ).fsPath;
+  result = spawnSync(path, ['version']);
+  if (result.status === 0) { return path; }
+
+  return null;
+}
+  \end{minted}
+  \caption{The function responsible for finding where \Rzk{} is installed}
+\end{listing}
+
+To download a pre-built binary of \Rzk{}, the extension queries the available releases on the
+GitHub repository and finds the latest release compatible with the installed version of the extension.
+Compatibility is determined by defining a semver \cite{Preston2013semantic} range in the extension's source code,
+which is then used to filter the releases and find the latest one that satisfies the range.
+
+\begin{listing}
+  \begin{minted}{typescript}
+import semver from 'semver';
+import type { RestEndpointMethodTypes } from '@octokit/rest';
+
+/** In semver range format */
+const supportedRzkVersions = '>=0.6.0 <1.0.0';
+
+type GitHubRelease =
+  RestEndpointMethodTypes['repos']['listReleases']['response']['data'][number];
+
+/**
+ * Checks whether the given rzk version is compatible with the extension
+ * @param version A version string, e.g. "1.3.2" or "v0.4.1.1"
+ */
+export function isCompatibleVersion(version: string) {
+  return semver.satisfies(semver.coerce(version) ?? '', supportedRzkVersions);
+}
+  \end{minted}
+  \caption{Version compatibility check in the VS Code extension.}
+  \label{code:ext-version}
+\end{listing}
+
+Then, the extension downloads the binary using Octokit SDK and extracts the tar archive to the local storage directory.
+
 After that, the extension simply starts the language server in a separate process and establishes a connection to it,
 and the rest is handled by VS Code and the language server.
+
+\subsubsection{Configuration}
+
+The extension provides configuration options to the user to customize the behavior of the extension.
+The user can specify the path to the \Rzk{} executable, which is useful for users who have the executable installed in a non-standard location, as well as for testing purposes.
+The user can also enable or disable the formatting feature and choose whether to receive pre-release versions of \Rzk{}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{figs/rzk-vscode-settings.png}
+  \label{figure:vscode-settings}
+  \caption{The extension configuration section in VS Code.}
+\end{figure}
+
+This is achieved using the configuration\footnote{
+  \url{https://code.visualstudio.com/api/references/contribution-points\#contributes.configuration}}
+field in \texttt{package.json}
 
 \subsection{\Rzk{} Language Server}
 
