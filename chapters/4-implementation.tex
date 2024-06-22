@@ -184,6 +184,54 @@ At the core of the \Rzk{} tool suite is the language server that powers all the 
 
 For the first versions of the language server, it is shipped as part of the \Rzk{} proof assistant itself under a different subcommand, but it is planned to decouple both components and have the language server depend on the core library. They are implemented in the Haskell programming language using the \texttt{lsp}\footnote{\url{https://hackage.haskell.org/package/lsp}} package.
 
+This entry point is made available to the user as a separate subcommand, \texttt{rzk lsp},
+which starts the language server and listens for incoming connections from the editor.
+It defines the handlers for the LSP messages and initializes the server with the necessary configuration
+for synchronizing between the files in the editor and the language server.
+
+\begin{listing}
+  \begin{minted}{haskell}
+handlers :: Handlers LSP
+handlers =
+  mconcat
+    [ notificationHandler SMethod_Initialized $ const typecheckFromConfigFile
+    -- Empty handlers omitted for brevity
+    , notificationHandler SMethod_WorkspaceDidChangeWatchedFiles handleFilesChanged
+    , requestHandler SMethod_TextDocumentCompletion provideCompletions
+    , requestHandler SMethod_TextDocumentSemanticTokensFull provideSemanticTokens
+    , requestHandler SMethod_TextDocumentFormatting formatDocument
+    ]
+
+syncOptions :: TextDocumentSyncOptions
+syncOptions = TextDocumentSyncOptions
+  { _openClose         = Just True
+  , _change            = Just TextDocumentSyncKind_Full
+  , _willSave          = Just False
+  , _willSaveWaitUntil = Just False
+  , _save              = Just $ InR $ SaveOptions { _includeText = Just True }
+  }
+
+runLsp :: IO Int
+runLsp = do
+  rzkEnv <- defaultRzkEnv
+  runServer $
+    ServerDefinition
+      { configSection = "rzk"
+      , parseConfig = \_oldConfig newObject -> case fromJSON newObject of
+          Error err         -> Left $ T.pack err
+          Success rzkConfig -> Right rzkConfig
+      , onConfigChange = const $ pure ()
+      , doInitialize = const . pure . Right
+      , staticHandlers = const handlers
+      , interpretHandler = \env -> Iso (flip runReaderT rzkEnv . runLspT env) liftIO
+      , options = defaultOptions { optTextDocumentSync = Just syncOptions }
+      , defaultConfig = def :: ServerConfig
+      }
+  \end{minted}
+  \caption{Initialization of the language server}
+  \label{code:server-init}
+\end{listing}
+
 It is also worth mentioning that the language server is designed to be compatible
 with any other editor that supports LSP, not just VS Code.
 In particular, users have reported success in integrating it with the NeoVim editor,
@@ -201,11 +249,55 @@ This feature is crucial for the users to be able to quickly identify and fix any
 These messages are displayed on the location in the file where the error occurred,
 and contain a useful message that explains what went wrong with all the necessary context.
 
+The process starts by looking for an \texttt{rzk.yaml} configuration file in the project directory,
+which contains information about which files are included in the project.
+Then, the language server parses the modified files, and if they parse successfully,
+runs the typechecker on then and collects the type errors.
+Finally, it sends the diagnostic messages (both parsing and type errors) to the editor,
+which then displays them to the user.
+An example of such a diagnostic message can be seen in Figure \ref{figure:diagnostic-message}.
+
+Since this process is computationally expensive, the language server caches the results of the typechecker
+and only re-runs it on the files that have changed since the last typecheck.
+Ideally, \Rzk{} would support incremental parsing and have a more granular and efficient check
+on what declarations exactly have changed, but this is currently not implemented.
+
 \subsubsection{Text Completion}
 
 The language server also provides text completion suggestions to the user as they type.
 These suggestions are context-aware and are based on the current cursor position in the file.
 They include previously defined proof identifiers, their types, and their definition locations.
+
+To provide the text completions items, the declarations that successfully typechecked are
+retrieved from the cache, which also includes information about their types and definition location.
+Then, the language server filters these declarations based on the current cursor position
+and sends them to the editor as completion items.
+This process (with irrelevant definitions omitted for brevity) can be seen in listing \ref{code:completions}.
+
+\begin{listing}
+  \begin{minted}{haskell}
+provideCompletions :: Handler LSP 'Method_TextDocumentCompletion
+provideCompletions req res = do
+  root <- getRootPath
+  let rootDir = fromMaybe "/" root
+  cachedModules <- getCachedTypecheckedModules
+  let currentFile = fromMaybe "" $ uriToFilePath $ req ^. params . textDocument . uri
+  -- Take all the modules up to and including the currently open one
+  let modules = map ignoreErrors $ takeWhileInc ((/= currentFile) . fst) cachedModules
+        where
+          ignoreErrors (path, RzkCachedModule{..}) = (path, cachedModuleDecls)
+          takeWhileInc _ [] = []
+          takeWhileInc p (x:xs)
+            | p x       = x : takeWhileInc p xs
+            | otherwise = [x]
+  let items = concatMap (declsToItems rootDir) modules
+  res $ Right $ InL items
+  \end{minted}
+  \caption{Completions providing function in the language server}
+  \label{code:completions}
+\end{listing}
+
+An example for these completions items can be seen in Figure \ref{figure:code-completions}.
 
 \subsubsection{Semantic Highlighting}
 
@@ -216,6 +308,30 @@ This is because it uses information from the parser, and not just from the lexer
 It can also use additional information from the typechecker to determine the type of a token,
 but this is currently not implemented since it was not deemed necessary.
 
+A (simplified) snippet of the code implementing semantic highlighting can be seen in listing \ref{code:semantic-highlighting},
+and an example of semantic highlighting in the editor can be seen in Figure \ref{figure:syntax-highlighting}.
+
+\begin{listing}
+  \begin{minted}{haskell}
+tokenizeTerm :: Term -> [SemanticTokenAbsolute]
+tokenizeTerm term = case term of
+  Universe{}           -> mkToken term SemanticTokenTypes_Class [defLib]
+  UniverseCube{}       -> mkToken term SemanticTokenTypes_Class [defLib]
+  UniverseTope{}       -> mkToken term SemanticTokenTypes_Class [defLib]
+
+  CubeUnit{}           -> mkToken term SemanticTokenTypes_Enum [defLib]
+  CubeUnitStar{}       -> mkToken term SemanticTokenTypes_EnumMember [defLib]
+  ASCII_CubeUnitStar{} -> mkToken term SemanticTokenTypes_EnumMember [defLib]
+
+  Cube2{}              -> mkToken term SemanticTokenTypes_Enum [defLib]
+  Cube2_0{}            -> mkToken term SemanticTokenTypes_EnumMember [defLib]
+  where
+    defLib = SemanticTokenModifiers_DefaultLibrary
+  \end{minted}
+  \caption{Sample of the tokenizing function for terms}
+  \label{code:semantic-highlighting}
+\end{listing}
+
 \subsubsection{Formatting}
 
 The language server also provides a formatting feature that allows the user to format their code according to a predefined style.
@@ -223,7 +339,76 @@ This is useful for keeping the codebase consistent and readable, and is especial
 The formatter catches common style issues such as indentation, spacing, and line breaks,
 and automatically fixes them according to the predefined style.
 
+The formatter is implemented in the core part of \Rzk{} itself.
 A separate CLI subcommand is available to expose this feature outside of the language server as well.
+
+The formatter uses the tokens produced from the lexical analysis step and attempts to find
+common style issues such as missing line breaks, incorrect indentation, and extra spaces.
+The approach of using the tokens was chosen because the parser does not produce a Concrete Syntax Tree
+that can be used for pretty-printing.
+This approach also allows for more flexibility in the coding style, while enforcing a few best practices.
+These best practices are outlined in the sHoTT repository's style guide\footnote{
+  \url{https://rzk-lang.github.io/sHoTT/STYLEGUIDE/}}.
+
+An example of the formatting function can be seen in listing \ref{code:formatting}.
+Figure \ref{figure:formatting} shows an example of the formatting feature in action.
+
+\begin{listing}
+  \begin{minted}{haskell}
+formatTextEdits :: String -> [FormattingEdit]
+formatTextEdits contents =
+  case resolveLayout True (tokens rzkBlocks) of
+    Left _err -> [] -- TODO: log error (in a CLI and LSP friendly way)
+    Right allToks -> go (initialState {allTokens = allToks}) allToks
+  where
+    -- Line break before := and one space after
+    go s (Token ":=" line col : tks)
+      = edits ++ go s tks
+      where
+        lineContent = contentLines line
+        isFirstNonSpaceChar = all (== ' ') (take (col - 1) lineContent)
+        spacesAfter = length $ takeWhile (== ' ') (drop (col + 1) lineContent)
+        spacesBefore = length $ takeWhile (== ' ') (reverse $ take (col - 1) lineContent)
+        edits = map snd $ filter fst
+            -- Ensure line break before `:=`
+          [ (not isFirstNonSpaceChar, FormattingEdit line (col - spacesBefore) line col "\n  ")
+            -- Ensure 2 spaces before `:=` (if already on a new line)
+          , (isFirstNonSpaceChar && spacesBefore /= 2,
+              FormattingEdit line 1 line col "  ")
+            -- Ensure exactly one space after
+          , (length lineContent > col + 2 && spacesAfter /= 1,
+              FormattingEdit line (col + 2) line (col + 2 + spacesAfter) " ")
+          ]
+    -- Remove any space before the closing paren
+    go s (Token ")" line col : tks)
+      = edits ++ go (decParensDepth s) tks
+      where
+        lineContent = contentLines line
+        isFirstNonSpaceChar = all (== ' ') (take (col - 1) lineContent)
+        spacesBefore = length $ takeWhile (== ' ') (reverse $ take (col - 1) lineContent)
+        edits = map snd $ filter fst
+          [ (not isFirstNonSpaceChar && spacesBefore > 0,
+              FormattingEdit line (col - spacesBefore) line col "")
+          ]
+    -- Other patterns ...
+  \end{minted}
+  \caption{Part of the formatting function}
+  \label{code:formatting}
+\end{listing}
+
+\begin{figure}
+  \centering
+  \begin{minipage}{0.55\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figs/formatting-before.png}
+  \end{minipage}\hfill
+  \begin{minipage}{0.35\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figs/formatting-after.png}
+  \end{minipage}
+  \caption{Before and after formatting a definition}
+  \label{figure:formatting}
+\end{figure}
 
 \section{Satellite Tools}
 
