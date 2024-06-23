@@ -412,12 +412,118 @@ formatTextEdits contents =
 
 \section{Satellite Tools}
 
-% TODO
+In addition to the VS Code extension and the lagnuage server, work on this project also
+involved the development of several satellite tools that are used along with \Rzk{}
+for a more complete development experience.
+The most noteworthy of these tools are a plugin for the MkDocs static site generator\footnote{
+  \url{https://www.mkdocs.org/}}
+and a GitHub Action that can be used to run \Rzk{} in Continuous Integration (CI) pipelines.
 
 \subsection{MkDocs Plugin}
 
-The \texttt{rzk-mkdocs-plugin} is a Python package that provides a plugin for the MkDocs static site generator.
+MkDocs is a static site generator that is commonly used to generate documentation websites.
+Sources are written in Markdown, which is convenient for \Rzk{} in particular since the \Rzk{}
+proofs can be written in the Literate Programming style, where the proofs are interspersed with
+explanatory text, for which the Markdown format is supported in \Rzk{}.
+
+The MkDocs plugin for \Rzk{} is a Python package that provides a plugin for MkDocs that can render
+tope diagrams in the documentation.
+It does so by running the \Rzk{} executable on the Markdown files and extracting any SVG
+output in the process's standard output stream.
+The figures are then mapped to the definitions that produced them and are inserted into the
+Markdown files as SVG diagrams right next to the definitions.
+It also adds some CSS code to the generated HTML to scale up the diagram on hover.
+
+An example of the rendered figure in the generated documentation can be seen in Figure \ref{figure:svg-rendering}.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{figs/svg-rendering.png}
+  \caption{The rendered diagrams inserted next to their definitions.}
+  \label{figure:svg-rendering}
+\end{figure}
+
+Another minor feature the plugin supports is generating hyperlinks for all definitions on a page
+so that the user can easily navigate to the definition's location by clicking on the hyperlink.
+The definition's name itself becomes a hyperlink that leads to the its location in the page.
+
+Both of these featues are configurable in the \texttt{mkdocs.yml} configuration file,
+where the user can specify the path to the \Rzk{} executable, whether to generate SVGs,
+and whether to generate hyperlinks or not.
+An example of such configuration can be seen in listing \ref{code:mkdocs-config}.
+
+\begin{listing}
+  \begin{minted}{yaml}
+plugins:
+  - rzk:
+      render_svg: true
+      anchor_definitions: true
+  \end{minted}
+  \caption{Plugin section of the \texttt{mkdocs.yml} configuration file of \Rzk{}'s documentation}
+  \label{code:mkdocs-config}
+\end{listing}
+
+The plugin is available on the Python Package Index\footnote{
+  \url{https://pypi.org/project/mkdocs-plugin-rzk/}},
 
 \subsection{GitHub Action}
 
-The \texttt{rzk-github-action} is a GitHub Action that can be used to run the \Rzk{} proof assistant on a GitHub repository.
+GitHub Actions \footnote{\url{https://github.com/features/actions}} is the CI workflow automation
+tool provided by GitHub that allows users to define workflows in YAML files that can be run
+on every push to the repository, on pull requests, or on other events.
+
+For formalization projects using \Rzk{}, it is important to be able to check the proofs
+for correctness on every push or pull request to the repository, to ensure that no incorrect
+formalizations are merged into the main branch.
+To that end, a GitHub Action was developed that can be used to run the \Rzk{} executable
+on the project files and check them for correctness.
+This adds a status check to the pull requests that shows whether the proofs typecheck or not,
+and possibly prevents merging if they do not.
+The status check is displayed next to the commit that triggerred the CI with either
+a green checkmark if it typechecks or a red cross if it doesn't, making the status easily visible
+to proof developers.
+The full output of the typechecker is also displayed in the GitHub Actions logs, so that the user
+can see what went wrong and fix it.
+
+Using the GitHub Action is as simple as adding a step to the workflow file with the snippet
+in listing \ref{code:rzk-action-step}.
+A full example of a workflow file can also be seen in listing \ref{code:rzk-action-full}.
+
+\begin{listing}
+  \begin{minted}{yaml}
+- name: Typecheck Rzk files
+  uses: rzk-lang/rzk-action@v1
+  with:
+    rzk-version: latest
+  \end{minted}
+  \caption{GitHub Actions step for checking an \Rzk{} project}
+  \label{code:rzk-action-step}
+\end{listing}
+
+\begin{listing}
+  \begin{minted}{yaml}
+name: Typecheck with latest Rzk
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on pull requests to the main branch
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Check formalisations
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Typecheck Rzk files
+        uses: rzk-lang/rzk-action@v1.2.0
+        with:
+          rzk-version: v0.7.1
+          files: src/**/*.rzk.md
+          check-formatting: true
+  \end{minted}
+  \caption{Full GitHub Actions workflow file for checking an \Rzk{} project}
+  \label{code:rzk-action-full}
+\end{listing}
