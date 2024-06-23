@@ -2,6 +2,10 @@
 \label{chap:lr}
 \chaptermark{Second Chapter Heading}
 
+This work builds on several areas of research, including proof assistants, language servers,
+and query-based compiler architectures.
+In this chapter, we review the most relevant literature in these areas.
+
 \section{Proof Assistants}
 
 \Rzk{} builds on recent efforts by other proof assistants to provide a more user-friendly interface for theorem proving,
@@ -98,6 +102,48 @@ This extension uses LSP to communicate with the Lean server and provides a lot
 of useful features, the most notable of which is the Info View panel that
 displays information about current proof state and allows interacting with it \cite{Nawrocki2023}.
 
-\section{Query Compiler Architecture}
+\section{Query-based Compiler Architecture}
 
-TODO: \cite{Shaikhha2016} \cite{Tahboub2018}
+Traditionally, the compilation process involved five phases \cite{dragon-book}:
+\begin{enumerate}
+  \item Lexical analysis
+  \item Parsing
+  \item Semantic analysis (including type checking)
+  \item Code generation
+  \item Optimization
+\end{enumerate}
+
+These phases are not necessarily rigid; many compilers would slightly deviate from them.
+For example, some compilers would involve additional phases (such as linking),
+some would merge a few of the phases together (such as lexical scanning and parsing),
+while some compilers would skip a stage altogether (such as optimization).
+However, the main fact remains that the compilation process overall had a linear pipeline
+architecture, where the output of one phase was the input to the next phase.
+
+Query-based compiler architecture \cite{ollef-rock} is a relatively new architecture for
+compilers that is designed for interactive programming environments.
+It splits the compilation phases into a much more granular model where each phase is
+represented as a query that can be run independently.
+This architecture can be modelled as more of a graph than a pipeline, where each node
+is a query and each edge is a dependency between queries.
+The results of such queries can be cached and reused, which can greatly speed up the
+response time in interactive environments, making it a good fit for language servers.
+
+While there has not been much research on query-based compiler architecture compared
+to the classical architectures, there is evidence for its applications since the year 1997,
+particularly in using it for debugging programs object-oriented programs \cite{Lencevicius1997},
+which is a use case very similar to that of language servers.
+
+Recently, Lenkefi and Mezei \cite{icsoft22} demonstrated the use of query-based compilers
+by developing a library for query-based compilers and using it to implement a compiler
+for a simple programming language they designed, along with a language server in LSP
+that uses the compiler to provide language features in VS Code.
+This compiler is designed with incrementality in mind, meaning that it can recompile
+only the parts of the program that have changed.
+
+Furthermore, a technique that helps radically speed up such interactive compilers
+is incremental parsing~\cite{Ghezzi1979}\cite{diekmann2019editing}\cite{Wagner1998},
+in which the Abstract Syntax Tree is patched with modifications to the source code
+rather than performing the syntax analysis from scratch on every minor edit.
+Many parser generators already incorporate this technology, such as
+Tree-sitter~\cite{tree-sitter} and Ohm~\cite{Dubroy2017}.
