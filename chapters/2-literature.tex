@@ -8,8 +8,8 @@ In this chapter, we review the most relevant literature in these areas.
 
 \section{Proof Assistants}
 
-\Rzk{} builds on recent efforts by other proof assistants to provide a more user-friendly interface for theorem proving,
-especially related to synthetic $\infty$-categories.
+\Rzk{}~\cite{kudasov2023experimental} builds on recent efforts by other proof assistants to provide a
+more user-friendly interface for theorem proving, especially related to synthetic $\infty$-categories.
 In this section, we review some of the most popular proof assistants and libraries for proof assistant development.
 
 \subsection{Proof assistants with support for synthetic $\infty$-categories}
@@ -101,6 +101,17 @@ extension that provides a user interface for working with Lean interactively.
 This extension uses LSP to communicate with the Lean server and provides a lot
 of useful features, the most notable of which is the Info View panel that
 displays information about current proof state and allows interacting with it \cite{Nawrocki2023}.
+Another feature it provides is finding all references for a particular symbol~\cite{Mennicken2022}.
+
+\subsection{Reports on language servers for proof assistants}
+
+There have been several reports on the development of language servers for proof assistants.
+For example, Bour et al.~\cite{Bour2018} report on the development of a language server for OCaml,
+Kaliszyk~\cite{Kaliszyk2007} describes a proposed architecture for web interfaces for proof assistants,
+implementing a prototype of an interface for Coq, while Tavante~\cite{Tavante2021} studies the
+tools and interfaces surrounding proof assistants and their usability.
+Lastly, Bünder and Kuchen~\cite{Buender2020} investigate how LSP can be used to integrate
+Domain Specific Languages (DSL) into different code editors.
 
 \section{Query-based Compiler Architecture}
 
