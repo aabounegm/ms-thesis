@@ -1,2 +1,53 @@
 \chapter{Evaluation and Discussion}
 \label{chap:eval}
+
+\section{Evaluation}
+
+The work on the \Rzk{} proof assistant and its language server has been evaluated
+by getting feedback directly from users and by comparing the features of the proof assistant
+to other proof assistants in the field.
+Overall, the feedback has been positive, with users appreciating the new features
+and the improved user experience.
+While the language server is still in development and lacks some features that are present in
+many other language servers, it covers the basic requirements and has been shown to be useful in practice.
+It implemented features such as incremental typechecking, semantic highlighting, diagnostics, formatting,
+and code completions, which are important for the editing experience of any programming language.
+The current implementation also sets the base for future work and more language features,
+which now have a clear path to be implemented.
+
+\subsection{ITP Summer School 2023}
+
+The main form of user feedback collection was during the 2-week summer school on
+Interaction of Proof Assistants and Mathematics\footnote{\url{https://itp-school-2023.github.io/}}
+that took place in September 2023 in Regensburg, Germany.
+A tutorial on \Rzk{} and how to use it was given to the participants and they were
+observed while using the proof assistant and the language server.
+The feedback was collected through informal discussions with the participants,
+and the requested features or fixes were noted down or worked on immediately.
+This also included feedback by the proponents of the type theory on which \Rzk{} is based.
+
+\subsection{Formalization projects}
+
+The \Rzk{} proof assistant has been used in several community-driven formalization projects.
+These projects have been used to evaluate the usability of the tools surrounding the
+proof assistant, including the language server and the VS Code extension.
+
+The most notable of these projects include:
+\begin{itemize}
+  \item \textbf{sHoTT}\footnote{\url{https://github.com/rzk-lang/sHoTT}}:
+        an active formalisation project for simplicial homotopy type theory and $\infty$-categories.
+  \item \textbf{HoTT Book}\footnote{\url{https://github.com/rzk-lang/hottbook}}:
+        formalization of the theorems and exercises from the Homotopy Type Theory book~\cite{hottbook}.
+  \item \textbf{Yoneda}\footnote{\url{https://github.com/emilyriehl/yoneda}}:
+        comparative formalizations of the Yoneda lemma for 1-categories and $\infty$-categories.
+\end{itemize}
+
+\section{Discussion and reflection}
+
+The results of this work have proven to be useful to mathematicians and
+computer scientists studying higher category theory and homotopy type theory.
+While the user base of the proof assistant is not large (and is not expected to be),
+the editing experience of those who use it has been significantly improved.
+Further improvements can be achieved by employing automated testing tools and
+by conducting a formal user study to evaluate the effectiveness of the new features.
+More LSP feature should additionally be implemented for an even smoother \Rzk{} editing experience.
