@@ -20,7 +20,7 @@ Coq \cite{huet1997coq} is one of the earliest proof assistants that are still wi
 It is based on the calculus of inductive constructions and is known for its support for dependent types and inductive types.
 Coq is used in a variety of research areas, including formal verification, programming language theory, and mathematics.
 
-Univalent foundations (and hence also Homotopy Type Theory) support in Coq is provided by the UniMath library~\cite{DanielGrayson2024}\cite{MacPherson2019}.
+Univalent foundations (and hence also Homotopy Type Theory) support in Coq is provided by the UniMath library~\cite{DanielGrayson2024, MacPherson2019}.
 
 \subsubsection{Cubical Agda}
 
@@ -153,7 +153,7 @@ This compiler is designed with incrementality in mind, meaning that it can recom
 only the parts of the program that have changed.
 
 Furthermore, a technique that helps radically speed up such interactive compilers
-is incremental parsing~\cite{Ghezzi1979}\cite{diekmann2019editing}\cite{Wagner1998},
+is incremental parsing~\cite{Ghezzi1979, diekmann2019editing, Wagner1998},
 in which the Abstract Syntax Tree is patched with modifications to the source code
 rather than performing the syntax analysis from scratch on every minor edit.
 Many parser generators already incorporate this technology, such as
