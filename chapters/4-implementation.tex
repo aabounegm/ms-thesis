@@ -368,10 +368,12 @@ formatTextEdits contents =
         lineContent = contentLines line
         isFirstNonSpaceChar = all (== ' ') (take (col - 1) lineContent)
         spacesAfter = length $ takeWhile (== ' ') (drop (col + 1) lineContent)
-        spacesBefore = length $ takeWhile (== ' ') (reverse $ take (col - 1) lineContent)
+        spacesBefore = length $ takeWhile (== ' ') (reverse $
+                                  take (col - 1) lineContent)
         edits = map snd $ filter fst
             -- Ensure line break before `:=`
-          [ (not isFirstNonSpaceChar, FormattingEdit line (col - spacesBefore) line col "\n  ")
+          [ (not isFirstNonSpaceChar,
+                FormattingEdit line (col - spacesBefore) line col "\n  ")
             -- Ensure 2 spaces before `:=` (if already on a new line)
           , (isFirstNonSpaceChar && spacesBefore /= 2,
               FormattingEdit line 1 line col "  ")
@@ -385,7 +387,8 @@ formatTextEdits contents =
       where
         lineContent = contentLines line
         isFirstNonSpaceChar = all (== ' ') (take (col - 1) lineContent)
-        spacesBefore = length $ takeWhile (== ' ') (reverse $ take (col - 1) lineContent)
+        spacesBefore = length $ takeWhile (== ' ')
+                                  (reverse $ take (col - 1) lineContent)
         edits = map snd $ filter fst
           [ (not isFirstNonSpaceChar && spacesBefore > 0,
               FormattingEdit line (col - spacesBefore) line col "")
