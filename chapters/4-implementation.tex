@@ -1,7 +1,7 @@
 \chapter{Implementation}
 \label{chap:impl}
 
-\section{\Rzk{} Language Server and VS Code extesion}
+\section{\Rzk{} Language Server and VS Code extension}
 
 In this section, we describe the implementation of the language server
 and the VS Code extension for the \Rzk{} proof assistant.
@@ -24,7 +24,7 @@ the expectations of mathematicians and computer scientists.
 Users benefit from clear and accessible navigation,
 enabling efficient exploration of HoTT-based structures.
 Furthermore, the extension provides syntax and semantic highlighting,
-enhancing code readability, and facilitating error detection.
+enhancing code readability and facilitating error detection.
 
 \begin{figure}
   \centering
@@ -297,14 +297,14 @@ provideCompletions req res = do
   \label{code:completions}
 \end{listing}
 
-An example for these completions items can be seen in Figure \ref{figure:code-completions}.
+An example of these completions items can be seen in Figure \ref{figure:code-completions}.
 
 \subsubsection{Semantic Highlighting}
 
 Another feature that the language server provides is semantic highlighting, which colors different parts of the code
 based on their meaning.
 This differs from syntax highlighting in that it is smarter and can use more information in determining a token's type (and hence color),
-This is because it uses information from the parser, and not just from the lexer.
+This is because it uses information from the parser and not just from the lexer.
 It can also use additional information from the typechecker to determine the type of a token,
 but this is currently not implemented since it was not deemed necessary.
 
